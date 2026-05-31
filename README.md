@@ -33,6 +33,41 @@ Tech Stack
 - Bootstrap (UI styling)
 - Google Gemini API (AI prediction)
 
----
+ Project Structure
+ templates/
+index.html
+edit.html
 
-## 📂 Project Structure
+.gitignore
+README.md
+app.py
+database.py
+list_models.py
+test_gemini.py
+requirements.txt
+
+ Modules Explanation
+
+- **app.py** → Main Flask application (CRUD + API integration)
+- **database.py** → Database connection and table handling
+- **list_models.py** → Helper/utility functions
+- **test_gemini.py** → Gemini API testing file
+- **templates/** → Frontend HTML pages (UI)
+- **index.html** → Home page (Add & view patients)
+- **edit.html** → Edit patient records page
+
+ Key Highlights
+
+- Full CRUD functionality implemented
+- AI-based health prediction using Gemini API
+- Input validation for safe data entry
+- SQLite database for persistence
+- Clean MVC-like structure
+
+📌 Note
+
+This project was developed as part of an AI/ML assessment task to demonstrate:
+- Backend development skills
+- API integration capability
+- Database handling
+- Basic AI usage in real-world application
