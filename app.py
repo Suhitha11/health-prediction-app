@@ -7,18 +7,11 @@ import os
 from dotenv import load_dotenv
 
 app = Flask(__name__)
-
-# ----------------------------
-# LOAD ENV + GEMINI SETUP
-# ----------------------------
 load_dotenv()
 
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 model = genai.GenerativeModel("models/gemini-2.5-flash")
 
-# ----------------------------
-# CREATE TABLE
-# ----------------------------
 def create_table():
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
@@ -41,9 +34,6 @@ def create_table():
 
 create_table()
 
-# ----------------------------
-# HOME PAGE
-# ----------------------------
 @app.route('/', methods=['GET', 'POST'])
 def home():
 
@@ -51,7 +41,6 @@ def home():
     cursor = conn.cursor()
 
     prediction = None
-
     if request.method == 'POST':
 
         fullname = request.form['fullname'].strip()
@@ -61,9 +50,7 @@ def home():
         haemoglobin = request.form['haemoglobin']
         cholesterol = request.form['cholesterol']
 
-        # ----------------------------
-        # VALIDATION
-        # ----------------------------
+     
         email_pattern = r'^[\w\.-]+@[\w\.-]+\.\w+$'
         if not re.match(email_pattern, email):
             prediction = "❌ Invalid Email Address"
@@ -78,9 +65,6 @@ def home():
                 prediction = "❌ Blood values must be numeric"
             else:
 
-                # ----------------------------
-                # GEMINI PROMPT
-                # ----------------------------
                 prompt = f"""
                 Analyze these blood test values:
 
@@ -94,9 +78,7 @@ def home():
                 response = model.generate_content(prompt)
                 prediction = response.text
 
-                # ----------------------------
-                # SAVE TO DATABASE
-                # ----------------------------
+           
                 cursor.execute('''
                 INSERT INTO patients
                 (fullname, dob, email, glucose, haemoglobin, cholesterol, remarks)
@@ -107,9 +89,6 @@ def home():
 
                 conn.commit()
 
-    # ----------------------------
-    # FETCH DATA
-    # ----------------------------
     cursor.execute("SELECT * FROM patients")
     patients = cursor.fetchall()
 
@@ -121,9 +100,6 @@ def home():
         prediction=prediction
     )
 
-# ----------------------------
-# EDIT PATIENT
-# ----------------------------
 @app.route('/edit/<int:id>', methods=['GET', 'POST'])
 def edit(id):
 
@@ -178,9 +154,6 @@ def edit(id):
 
     return render_template('edit.html', patient=patient)
 
-# ----------------------------
-# DELETE PATIENT
-# ----------------------------
 @app.route('/delete/<int:id>')
 def delete(id):
 
@@ -194,8 +167,5 @@ def delete(id):
 
     return redirect(url_for('home'))
 
-# ----------------------------
-# RUN APP
-# ----------------------------
 if __name__ == '__main__':
     app.run(debug=True)
